@@ -1,0 +1,32 @@
+{
+  "name": "Eme’s Cafe",
+  "site_url": "https://prithiraj.github.io/eme-cafe/",
+  "preview": true,
+  "research_date": "2026-09-07",
+  "address": {"street": "13A Shore Road", "neighbourhood": "Remuera", "city": "Auckland", "postal_code": "1050", "country": "NZ"},
+  "address_note": "The owner profile uses 13A; some listings use 13. Owner confirmation pending.",
+  "phone": "+64 9 522 2783",
+  "phone_uri": "tel:+6495222783",
+  "email": "emescafe688@gmail.com",
+  "hours": [
+    {"label": "Monday – Friday", "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "06:30", "closes": "15:00", "display": "6:30 am – 3 pm"},
+    {"label": "Saturday – Sunday", "days": ["Saturday", "Sunday"], "opens": "07:00", "closes": "15:00", "display": "7 am – 3 pm"}
+  ],
+  "kitchen": "Kitchen closes at 2 pm",
+  "maps": "https://www.google.com/maps?cid=5759762855789388953",
+  "instagram": "https://www.instagram.com/emescafe.akl/",
+  "facebook": "https://www.facebook.com/p/Emescafeakl-61568487993875/",
+  "title": "Eme’s Cafe | Brunch, Coffee & Matcha in Remuera — Preview",
+  "description": "A little taste of Eme’s Cafe on Shore Road, Remuera. Explore brunch, coffee, matcha and cabinet treats, find published hours and get directions. Website preview.",
+  "highlights": [
+    {"name": "Chicken karaage croffle", "category": "brunch", "label": "A savoury twist", "description": "A different kind of brunch. Chicken karaage meets the croffle in this dish shared by Eme’s.", "source": "https://www.facebook.com/p/Emescafeakl-61568487993875/", "image": "brunch"},
+    {"name": "Coffee & colourful matcha", "category": "drinks", "label": "Your next coffee break", "description": "Coffee, iced blueberry matcha and matcha with Thai tea — a little colour for your coffee catch-up.", "source": "https://www.instagram.com/emescafe.akl/", "image": "drinks"},
+    {"name": "A little something sweet", "category": "sweet", "label": "From the cabinet", "description": "Take a peek at the baking cabinet. Ask at the café for the day’s selection.", "source": "https://www.toogoodtogo.com/en-nz/find/auckland/emescafe/bakedgoods/surprisebags-176618356905439523", "image": "cabinet"}
+  ],
+  "more_highlights": [
+    {"name": "Creamy portobello mushroom", "category": "brunch", "note": "Featured in Eme’s food posts"},
+    {"name": "Iced blueberry matcha", "category": "drinks", "note": "A colourful café-published drink"},
+    {"name": "Matcha × Thai tea", "category": "drinks", "note": "Two favourites, one glass"},
+    {"name": "Basque burnt cheesecake", "category": "sweet", "note": "Previously featured; flavours and availability may change"}
+  ]
+}
