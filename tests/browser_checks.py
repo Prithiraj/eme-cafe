@@ -44,7 +44,7 @@ with server(), sync_playwright() as p:
         page.wait_for_timeout(600)
         broken = page.locator('img[data-business-photo]').evaluate_all('(imgs) => imgs.filter(img => !img.complete || !img.naturalWidth).map(img => img.src)')
         assert not broken, f'Broken images at {width}px: {broken}'
-        page.evaluate('window.scrollTo(0,0)')
+        page.evaluate("document.documentElement.style.scrollBehavior='auto'; window.scrollTo(0,0)")
         page.wait_for_timeout(150)
         if width in (390,1440):
             page.screenshot(path=str(OUT / f'homepage-{width}.png'), full_page=True)
