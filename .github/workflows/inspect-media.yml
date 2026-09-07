@@ -1,0 +1,24 @@
+name: Inspect public business media
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/inspect-media.yml
+permissions:
+  contents: read
+jobs:
+  media:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Download public business references
+        run: |
+          mkdir -p references
+          curl --fail --location --max-time 45 'https://www.ubereats.com/nz/store/emes-cafe/ee9m3BjoVkinN-g8RzcuiQ' -o references/uber.html || true
+          curl --fail --location --max-time 45 'https://www.toogoodtogo.com/en-nz/find/auckland/emescafe/bakedgoods/surprisebags-176618356905439523' -o references/tgtg.html || true
+          curl --fail --location --max-time 45 'https://images.tgtg.ninja/item/cover/7aceb7bf-3d68-4e8b-a7aa-3fb8d054ce8a.png' -o references/cabinet.png || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: business-photo-references
+          path: references
+          retention-days: 3
