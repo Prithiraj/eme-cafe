@@ -1,0 +1,37 @@
+name: Import reviewed website assets
+on:
+  workflow_dispatch:
+  push:
+    paths: [.github/workflows/import-assets.yml]
+permissions:
+  contents: write
+concurrency:
+  group: import-reviewed-assets
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image processing dependency
+        run: python -m pip install Pillow==11.3.0
+      - name: Import reviewed photos and licensed font subsets
+        run: python scripts/import-assets.py
+      - name: Preserve local assets and the provenance register
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/assets docs/ASSET_REGISTER.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Store optimised real café photographs, font licences and asset provenance'
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - uses: actions/upload-artifact@v4
+        with:
+          name: imported-website-assets
+          path: public/assets
+          retention-days: 3
