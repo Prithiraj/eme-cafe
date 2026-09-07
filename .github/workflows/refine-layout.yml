@@ -13,17 +13,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Apply targeted source refinements
+      - name: Apply visually reviewed source refinements
         run: |
           python - <<'PY'
           from pathlib import Path
           css=Path('src/styles.css')
           text=css.read_text()
-          old='inset:0 -.5rem 3rem 1.5rem;transform:rotate(6deg)'
-          assert old in text, 'Expected reviewed halo rule was not found'
-          text=text.replace(old,'inset:0 1rem 3rem 1.5rem;transform:rotate(4deg)')
+          text=text.replace('inset:0 -.5rem 3rem 1.5rem;transform:rotate(6deg)','inset:0 1rem 3rem 1.5rem;transform:rotate(4deg)')
           text=text.replace('.hero-spark{position:absolute;bottom:-1.1rem;', '.hero-spark{position:absolute;pointer-events:none;bottom:-2.6rem;')
           text=text.replace('h1,h2{letter-spacing:-.055em;', 'h1,h2{word-spacing:.045em;letter-spacing:-.055em;')
+          text=text.replace('font-size:clamp(3.5rem,12.6vw,4.8rem)','font-size:clamp(2.75rem,12.3vw,3.9rem)')
+          text=text.replace('h1{font-size:3.45rem}','h1{font-size:2.75rem}')
           css.write_text(text)
           tests=Path('tests/browser_checks.py')
           text=tests.read_text().replace("page.evaluate('window.scrollTo(0,0)')", 'page.evaluate("document.documentElement.style.scrollBehavior=\'auto\'; window.scrollTo(0,0)")')
@@ -33,24 +33,18 @@ jobs:
           for entry in ['node_modules/','test-results/','dist/']:
               if entry not in text.splitlines(): text+='\n'+entry+'\n'
           ignore.write_text(text)
-          # Research results are retained in the provenance register, not repeatedly fetched.
-          for path in ['.github/workflows/inspect-media.yml','.github/workflows/inspect-food.yml','scripts/research-media.py']:
-              Path(path).unlink(missing_ok=True)
-          importer=Path('.github/workflows/import-assets.yml')
-          text=importer.read_text().replace('  push:\n    paths: [.github/workflows/import-assets.yml]\n','')
-          importer.write_text(text)
-          # This one-time source migration removes its own workflow after completion.
-          Path('.github/workflows/refine-layout.yml').unlink()
           PY
-      - name: Commit the reviewed refinements
+      - name: Commit only source and test changes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/styles.css tests/browser_checks.py .gitignore .github/workflows scripts/research-media.py
-          git commit -m 'Fix tablet halo overflow, improve headline spacing and finalise QA tooling'
-          git pull --rebase origin main
-          git push origin HEAD:main
-      - name: Run the test-gated Pages deployment on the updated main branch
+          git add src/styles.css tests/browser_checks.py .gitignore
+          if ! git diff --cached --quiet; then
+            git commit -m 'Fix tablet overflow and refine the mobile photographic hero'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Run the test-gated Pages deployment on updated main
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run pages.yml --ref main
