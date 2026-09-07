@@ -2,10 +2,13 @@ name: Build, test and publish Eme’s Cafe
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - '.gitignore'
+    paths:
+      - 'src/**'
+      - 'content/**'
+      - 'public/**'
+      - 'scripts/build.py'
+      - 'tests/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -65,6 +68,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      site_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Publish to GitHub Pages
         id: deployment
@@ -92,3 +97,39 @@ jobs:
                   if attempt == 11: raise
                   time.sleep(5)
           PY
+  performance:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run three mobile Lighthouse audits against the published site
+        env:
+          SITE_URL: ${{ needs.deploy.outputs.site_url }}
+        run: |
+          mkdir -p performance-results
+          npm install --no-save --package-lock=false lighthouse@12.8.2
+          for run in 1 2 3; do
+            npx lighthouse "$SITE_URL" --chrome-flags='--headless --no-sandbox' --only-categories=performance,accessibility,best-practices --output=json --output-path="performance-results/lighthouse-$run.json" --quiet
+          done
+          python - <<'PY'
+          from pathlib import Path
+          import json, statistics
+          rows=[]
+          for path in sorted(Path('performance-results').glob('lighthouse-*.json')):
+              result=json.loads(path.read_text())
+              rows.append({'run':path.stem,'url':result['finalDisplayedUrl'],'lighthouse_version':result['lighthouseVersion'],'performance':round(result['categories']['performance']['score']*100),'accessibility':round(result['categories']['accessibility']['score']*100),'best_practices':round(result['categories']['best-practices']['score']*100),'lcp_ms':result['audits']['largest-contentful-paint']['numericValue'],'cls':result['audits']['cumulative-layout-shift']['numericValue'],'tbt_ms':result['audits']['total-blocking-time']['numericValue']})
+          summary={'runs':rows,'median_performance':statistics.median(r['performance'] for r in rows),'measurement':'Mobile Lighthouse simulated throttling against the public GitHub Pages URL. Laboratory measurement, not field Core Web Vitals. SEO deliberately excluded because this preview is noindex.'}
+          Path('performance-results/summary.json').write_text(json.dumps(summary,indent=2))
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Preserve performance measurements
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-performance-results
+          path: performance-results
+          retention-days: 14
+          if-no-files-found: ignore
