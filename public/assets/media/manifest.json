@@ -1,0 +1,47 @@
+{
+  "hero": {
+    "file": "brunch",
+    "width": 720,
+    "height": 1280,
+    "widths": [
+      320,
+      480,
+      720
+    ],
+    "source_sha256": "4db7adc529d4a15e68864082525c7d51c34369e4aba59d0d4e8234a987680328"
+  },
+  "drinks": {
+    "file": "matcha",
+    "width": 600,
+    "height": 800,
+    "widths": [
+      320,
+      480,
+      600
+    ],
+    "source_sha256": "eedf1e391be3db24a6a2ec8438b04715166736da7ac4578521ecc4afd940ebfd"
+  },
+  "cabinet": {
+    "file": "cabinet",
+    "width": 1246,
+    "height": 932,
+    "widths": [
+      320,
+      480,
+      768,
+      1200
+    ],
+    "source_sha256": "b765182966c38a54e31e6edbf71644009384e8def670ca458abe18bf8d66e681"
+  },
+  "table": {
+    "file": "table",
+    "width": 640,
+    "height": 853,
+    "widths": [
+      320,
+      480,
+      640
+    ],
+    "source_sha256": "5131f741f7828bdd305b0a9c21e8f8a4a04ff0823f18d9ef705767db7d18b659"
+  }
+}
