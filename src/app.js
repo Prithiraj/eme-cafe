@@ -12,16 +12,19 @@
     };
     toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
     nav.addEventListener('click', (event) => {
-      if (event.target.closest('a') && mobile.matches) setOpen(false);
+      if (event.target instanceof Element && event.target.closest('a') && mobile.matches) setOpen(false);
     });
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && document.body.classList.contains('nav-open')) setOpen(false, true);
     });
     document.addEventListener('click', (event) => {
-      if (mobile.matches && !event.target.closest('.site-header')) setOpen(false);
+      if (mobile.matches && event.target instanceof Element && !event.target.closest('.site-header')) setOpen(false);
     });
-    mobile.addEventListener('change', () => setOpen(false));
-    toggle.hidden = false;
+    mobile.addEventListener('change', () => {
+      setOpen(false);
+      toggle.hidden = !mobile.matches;
+    });
+    toggle.hidden = !mobile.matches;
     document.body.classList.add('has-js');
   }
 
@@ -31,7 +34,7 @@
   if (bar && status && items.length) {
     bar.hidden = false;
     bar.addEventListener('click', (event) => {
-      const selected = event.target.closest('button[data-filter]');
+      const selected = event.target instanceof Element ? event.target.closest('button[data-filter]') : null;
       if (!selected) return;
       const category = selected.dataset.filter;
       let count = 0;
